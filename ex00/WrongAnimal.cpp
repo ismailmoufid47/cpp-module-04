@@ -15,10 +15,9 @@ WrongAnimal::WrongAnimal(const WrongAnimal &other) : type(other.type)
 WrongAnimal &WrongAnimal::operator=(const WrongAnimal &other)
 {
 	std::cout << "WrongAnimal copy assignment operator called" << std::endl;
+
 	if (this != &other)
-	{
 		type = other.type;
-	}
 	return *this;
 }
 
@@ -29,7 +28,7 @@ WrongAnimal::~WrongAnimal()
 
 void WrongAnimal::makeSound() const
 {
-	std::cout << "Some wrong animal sound" << std::endl;
+	std::cout << "* Generic animal sound *" << std::endl;
 }
 
 std::string WrongAnimal::getType() const
