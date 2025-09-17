@@ -111,7 +111,7 @@ void testMateriaSourceLimits()
 	src->learnMateria(new Cure());
 	src->learnMateria(new Ice());
 	src->learnMateria(new Cure());
-	src->learnMateria(new Ice()); // Should be ignored
+	src->learnMateria(new Ice());
 
 	std::cout << "Testing unknown materia type:\n";
 	AMateria *unknown = src->createMateria("fire");
