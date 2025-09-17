@@ -53,6 +53,11 @@ void Character::equip(AMateria *m)
 		inventory[count] = m;
 		count++;
 	}
+	else if (m)
+	{
+		floor[floorCount++] = m;
+		std::cout << "Character: Inventory full, materia dropped on the floor" << std::endl;
+	}
 }
 
 void Character::unequip(int idx)

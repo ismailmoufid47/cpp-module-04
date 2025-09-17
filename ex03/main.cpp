@@ -190,12 +190,15 @@ int main()
 {
 
 	testBasicFunctionality();
+
 	testInventoryLimits();
-	testUnequipAndReequip();
 	testMateriaSourceLimits();
+
+	testUnequipAndReequip();
 	testDeepCopy();
 	testDirectMateriaUsage();
 
 	std::cout << "\n=== ALL TESTS COMPLETED ===\n";
 	std::cout << "Check for memory leaks with valgrind!\n";
+	while (true) { }
 }

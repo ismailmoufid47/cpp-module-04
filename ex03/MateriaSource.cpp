@@ -37,6 +37,11 @@ void MateriaSource::learnMateria(AMateria *m)
 		inventory[count] = m;
 		count++;
 	}
+	else if (m)
+	{
+		std::cout << "MateriaSource: Inventory full, cannot learn more materia" << std::endl;
+		delete m;
+	}
 }
 
 AMateria *MateriaSource::createMateria(std::string const &type)
