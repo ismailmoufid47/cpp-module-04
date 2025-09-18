@@ -2,13 +2,21 @@
 
 #include <iostream>
 
-Character::Character() : name("default"), floorCount(0), count(0) {}
+Floor *Character::floorHead = new Floor();
+Floor *Character::floorTail = Character::floorHead;
 
-Character::Character(const std::string &name) : name(name), floorCount(0), count(0) {}
+Character::Character() : name("default"), count(0) {}
 
-Character::Character(const Character &other) : name(other.name), floorCount(0), count(0)
+Character::Character(const std::string &name) : name(name), count(0) {}
+
+Character::Character(const Character &other) : name(other.name), count(0)
 {
-	*this = other;
+	for (int i = 0; i < other.count; ++i)
+	{
+		if (other.inventory[i])
+			inventory[i] = other.inventory[i]->clone();
+	}
+	count = other.count;
 }
 
 Character &Character::operator=(const Character &other)
@@ -18,16 +26,12 @@ Character &Character::operator=(const Character &other)
 		name = other.name;
 
 		for (int i = 0; i < count; i++)
-			delete inventory[i];
+			unequip(i);
 
 		count = other.count;
 
 		for (int i = 0; i < count; i++)
 			inventory[i] = other.inventory[i]->clone();
-
-		for (int i = 0; i < floorCount; i++)
-			delete floor[i];
-		floorCount = 0;
 	}
 	return *this;
 }
@@ -36,9 +40,6 @@ Character::~Character()
 {
 	for (int i = 0; i < count; i++)
 		delete inventory[i];
-
-	for (int i = 0; i < floorCount; i++)
-		delete floor[i];
 }
 
 std::string const &Character::getName() const
@@ -54,10 +55,7 @@ void Character::equip(AMateria *m)
 		count++;
 	}
 	else if (m)
-	{
-		floor[floorCount++] = m;
-		std::cout << "Character: Inventory full, materia dropped on the floor" << std::endl;
-	}
+		throwOnFloor(m);
 }
 
 void Character::unequip(int idx)
@@ -65,15 +63,11 @@ void Character::unequip(int idx)
 	if (idx < 0 || idx >= count || !inventory[idx])
 		return;
 
-	if (floorCount < 1000)
-		floor[floorCount++] = inventory[idx];
-	else
-		delete inventory[idx];
+	throwOnFloor(inventory[idx]);
 
-	for (int i = idx; i < count - 1; i++)
-		inventory[i] = inventory[i + 1];
-	inventory[count - 1] = nullptr;
-	count--;
+	inventory[idx] = inventory[count - 1];
+	inventory[count - 1] = NULL;
+	--count;
 }
 
 void Character::use(int idx, ICharacter &target)
@@ -82,4 +76,33 @@ void Character::use(int idx, ICharacter &target)
 		return;
 
 	inventory[idx]->use(target);
+}
+
+void Character::cleanFloor()
+{
+	Floor *current = floorHead;
+	while (current)
+	{
+		Floor *next = current->next;
+
+		if (current->materia)
+			delete current->materia;
+
+		delete current;
+		current = next;
+	}
+	floorHead = NULL;
+	floorTail = NULL;
+}
+
+void Character::throwOnFloor(AMateria *m)
+{
+	if (m)
+	{
+		floorTail->materia = m;
+		floorTail->next = new Floor();
+		floorTail = floorTail->next;
+		floorTail->materia = NULL;
+		floorTail->next = NULL;
+	}
 }

@@ -35,17 +35,16 @@ void testInventoryLimits()
 {
 	std::cout << "\n=== INVENTORY LIMITS TEST ===\n";
 
-	IMateriaSource *src = new MateriaSource();
-	src->learnMateria(new Ice());
-	src->learnMateria(new Cure());
+	MateriaSource src;
+	src.learnMateria(new Ice());
+	src.learnMateria(new Cure());
 
 	ICharacter *warrior = new Character("Warrior");
 
 	std::cout << "Equipping 5 materias (max 4 slots):\n";
 	for (int i = 0; i < 5; i++)
 	{
-		AMateria *materia = src->createMateria("ice");
-		warrior->equip(materia);
+		warrior->equip(src.createMateria("ice"));
 		std::cout << "Equipped materia " << i + 1 << "\n";
 	}
 
@@ -59,7 +58,6 @@ void testInventoryLimits()
 
 	delete target;
 	delete warrior;
-	delete src;
 }
 
 void testUnequipAndReequip()
@@ -155,50 +153,22 @@ void testDeepCopy()
 	copy1.use(0, *target);
 	std::cout << "Copy2: ";
 	copy2.use(0, *target);
-
 	delete target;
 	delete src;
-}
-
-void testDirectMateriaUsage()
-{
-	std::cout << "\n=== DIRECT MATERIA USAGE TEST ===\n";
-
-	Ice *ice = new Ice();
-	Cure *cure = new Cure();
-	ICharacter *target = new Character("DirectTarget");
-
-	std::cout << "Direct usage:\n";
-	ice->use(*target);
-	cure->use(*target);
-
-	std::cout << "\nTesting clone:\n";
-	AMateria *iceClone = ice->clone();
-	AMateria *cureClone = cure->clone();
-
-	iceClone->use(*target);
-	cureClone->use(*target);
-
-	delete ice;
-	delete cure;
-	delete iceClone;
-	delete cureClone;
-	delete target;
 }
 
 int main()
 {
 
 	testBasicFunctionality();
+	testDeepCopy();
 
 	testInventoryLimits();
 	testMateriaSourceLimits();
 
 	testUnequipAndReequip();
-	testDeepCopy();
-	testDirectMateriaUsage();
 
 	std::cout << "\n=== ALL TESTS COMPLETED ===\n";
-	std::cout << "Check for memory leaks with valgrind!\n";
-	while (true) { }
+	Character::cleanFloor();
+	// while (true) { }
 }

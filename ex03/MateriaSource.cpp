@@ -1,12 +1,14 @@
 #include "MateriaSource.hpp"
+#include "Character.hpp"
 
 #include <iostream>
 
-MateriaSource::MateriaSource() : count(0){}
+MateriaSource::MateriaSource() : count(0) {}
 
-MateriaSource::MateriaSource(const MateriaSource &other) : count(0)
+MateriaSource::MateriaSource(const MateriaSource &other) : count(other.count)
 {
-	*this = other;
+	for (int i = 0; i < count; i++)
+		inventory[i] = other.inventory[i]->clone();
 }
 
 MateriaSource &MateriaSource::operator=(const MateriaSource &other)
@@ -14,10 +16,9 @@ MateriaSource &MateriaSource::operator=(const MateriaSource &other)
 	if (this != &other)
 	{
 		for (int i = 0; i < count; i++)
-			delete inventory[i];
+			Character::throwOnFloor(inventory[i]);
 
 		count = other.count;
-
 		for (int i = 0; i < count; i++)
 			inventory[i] = other.inventory[i]->clone();
 	}
@@ -51,5 +52,5 @@ AMateria *MateriaSource::createMateria(std::string const &type)
 			return inventory[i]->clone();
 
 	std::cout << "MateriaSource: Unknown materia type '" << type << "'" << std::endl;
-	return nullptr;
+	return NULL;
 }
